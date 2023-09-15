@@ -36,7 +36,7 @@ app.use("/api", fplRoutes);
 // Serve the frontend index.html for all routes
 app.get("/*", (req, res) => {
   // Send the index.html from the frontend build directory
-  res.sendFile(path.join(__dirname, "frontend", "build", "index.html"));
+  res.sendFile(path.join(frontend, "frontend", "build", "index.html"));
 });
 
 import { logger } from "./services/logger.service.js";
