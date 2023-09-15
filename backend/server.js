@@ -11,31 +11,32 @@ const server = http.createServer(app);
 app.use(cookieParser());
 app.use(express.json());
 
-// if (process.env.NODE_ENV === "production") {
-//   app.use(express.static(path.resolve("public")));
-// } else {
-//   const corsOptions = {
-//     origin: [
-//       "http://127.0.0.1:3000",
-//       "http://localhost:3000",
-//       "http://127.0.0.1:5173",
-//       "http://localhost:5173",
-//     ],
-//     credentials: true,
-//   };
-//   app.use(cors(corsOptions));
-// }
+if (process.env.NODE_ENV === "production") {
+  // Serve the frontend build directory (adjust the path as needed)
+  app.use(express.static(path.join(__dirname, "frontend", "build"))); // Use __dirname here
+} else {
+  const corsOptions = {
+    origin: [
+      "http://127.0.0.1:3000",
+      "http://localhost:3000",
+      "http://127.0.0.1:5173",
+      "http://localhost:5173",
+    ],
+    credentials: true,
+  };
+  app.use(cors(corsOptions));
+}
 
 import { fplRoutes } from "./api/fpl/fpl.routes.js";
 import { setupSocketAPI } from "./services/socket.service.js";
 
-// routes
-
+// API routes
 app.use("/api", fplRoutes);
-setupSocketAPI(server);
 
-app.get("/**", (req, res) => {
-  res.sendFile(path.resolve("public/index.html"));
+// Serve the frontend index.html for all routes
+app.get("/*", (req, res) => {
+  // Send the index.html from the frontend build directory
+  res.sendFile(path.join(__dirname, "frontend", "build", "index.html"));
 });
 
 import { logger } from "./services/logger.service.js";
