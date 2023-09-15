@@ -12,8 +12,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 if (process.env.NODE_ENV === "production") {
-  // Serve the frontend build directory (adjust the path as needed)
-  app.use(express.static(path.join(__dirname, "frontend", "build"))); // Use __dirname here
+  app.use(express.static(path.resolve("public")));
 } else {
   const corsOptions = {
     origin: [
@@ -30,13 +29,13 @@ if (process.env.NODE_ENV === "production") {
 import { fplRoutes } from "./api/fpl/fpl.routes.js";
 import { setupSocketAPI } from "./services/socket.service.js";
 
-// API routes
-app.use("/api", fplRoutes);
+// routes
 
-// Serve the frontend index.html for all routes
-app.get("/*", (req, res) => {
-  // Send the index.html from the frontend build directory
-  res.sendFile(path.join(frontend, "frontend", "build", "index.html"));
+app.use("/api", fplRoutes);
+setupSocketAPI(server);
+
+app.get("/**", (req, res) => {
+  res.sendFile(path.resolve("public/index.html"));
 });
 
 import { logger } from "./services/logger.service.js";
